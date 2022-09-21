@@ -38,6 +38,18 @@ def get_shop_list_by_dishes(cook_book, dishes, person_count):
         tmpdict.update({ti: i})
     return tmpdict
 
+def file_to_dict(file):
+    outdict = dict()
+    with open(file, mode='r', encoding='utf-8') as file:
+        t = file.read().split('\n\n')
+        for i in t:
+            t[t.index(i)] = i.split('\n')
+        print(*t, sep='\n')
+        for j in range(0, len(t)):
+            for i in range(2, len(t[j])):
+                print(t[j][i])
+
+
 def menu():
     file = 'cook_book.txt'
     print("Сегодня в меню:")
@@ -45,11 +57,9 @@ def menu():
     print("Что будем готовить?")
 
 
-menu()
+# menu()
 
-with open('cook_book.txt', mode='r', encoding='UTF8') as fole:
-    for line in fole:
-        print(line, end='')
+file_to_dict('cook_book.txt')
 # t = get_shop_list_by_dishes(filetodict('cook_book.txt'), ['Запеченный картофель', 'Омлет'], 3)
 #
 # for m in t:
