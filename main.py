@@ -4,18 +4,19 @@ def filetodict(file, sep=' | '):
     tmplist = list()
     cook_book = {}
     tl3 = list()
-    f = open(file, mode='r', encoding='utf-8')
-    for line in f:
-        if line != '\n':
-            tmplist.append(line.replace('\n', ''))
-        else:
-            for i in range(2, len(tmplist)):
-                tl2 = tmplist[i].split(sep)
-                tl3.append({'ingredient_name': tl2[0], 'quantity': int(tl2[1]), 'measure': tl2[2]})
-            cook_book.update({tmplist[0]: tl3})
-            tmplist = list()
-            tl3 = list()
+    with open(file, mode='r', encoding='utf-8') as f:
+        for line in f:
+            if line != '\n':
+                tmplist.append(line.replace('\n', ''))
+            else:
+                for i in range(2, len(tmplist)):
+                    tl2 = tmplist[i].split(sep)
+                    tl3.append({'ingredient_name': tl2[0], 'quantity': int(tl2[1]), 'measure': tl2[2]})
+                cook_book.update({tmplist[0]: tl3})
+                tmplist = list()
+                tl3 = list()
     return cook_book
+
 
 def get_shop_list_by_dishes(cook_book, dishes, person_count):
     tmplist = []
@@ -37,8 +38,19 @@ def get_shop_list_by_dishes(cook_book, dishes, person_count):
         tmpdict.update({ti: i})
     return tmpdict
 
-# filetodict('files.txt')
-t = get_shop_list_by_dishes(filetodict('files.txt'), ['Запеченный картофель', 'Омлет'], 3)
+def menu():
+    file = 'cook_book.txt'
+    print("Сегодня в меню:")
+    print(*filetodict(file, ' | '), sep=', ')
+    print("Что будем готовить?")
 
-for i in t:
-    print(f"{i}: {t[i]}")
+
+menu()
+
+with open('cook_book.txt', mode='r', encoding='UTF8') as fole:
+    for line in fole:
+        print(line, end='')
+# t = get_shop_list_by_dishes(filetodict('cook_book.txt'), ['Запеченный картофель', 'Омлет'], 3)
+#
+# for m in t:
+#     print(f"{m}: {t[m]}")
