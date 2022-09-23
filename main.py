@@ -1,20 +1,21 @@
 # Задание: https://github.com/netology-code/py-homeworks-basic/tree/master/7.files
 
-def filetodict(file, sep=' | '):
-    tmplist = list()
-    cook_book = {}
-    tl3 = list()
-    with open(file, mode='r', encoding='utf-8') as f:
+def file_to_dict(file, sep=' | '):
+    c = 0
+    cook_book = dict()
+    dishname = str()
+    with open(file, mode='r', encoding='UTF8') as f:
         for line in f:
             if line != '\n':
-                tmplist.append(line.replace('\n', ''))
+                if c == 0:
+                    dishname = line.replace('\n', '')
+                    cook_book.update({dishname: []})
+                if c >= 2:
+                    tmplist = line.split(sep)
+                    cook_book[dishname].append({'ingredient_name': tmplist[0], 'quantity': tmplist[1], 'measure': tmplist[2]})
             else:
-                for i in range(2, len(tmplist)):
-                    tl2 = tmplist[i].split(sep)
-                    tl3.append({'ingredient_name': tl2[0], 'quantity': int(tl2[1]), 'measure': tl2[2]})
-                cook_book.update({tmplist[0]: tl3})
-                tmplist = list()
-                tl3 = list()
+                c = -1
+            c += 1
     return cook_book
 
 
@@ -38,19 +39,50 @@ def get_shop_list_by_dishes(cook_book, dishes, person_count):
         tmpdict.update({ti: i})
     return tmpdict
 
+
+def enumerate_menu(in_dict):
+    c = 1
+    out_dict = {}
+    for i in in_dict:
+        out_dict.update({c: i})
+        c += 1
+    return out_dict
+
+# def enumerate_menu(in_dict):
+#     c = 1
+#     out_dict = {}
+#     for i in in_dict:
+#         out_dict.update({c: {i: in_dict[i]}})
+#         c += 1
+#     return out_dict
+
+
 def menu():
-    file = 'cook_book.txt'
+    file = 'file.txt'
+    menu = file_to_dict(file)
+    menu_numbers = enumerate_menu(menu)
     print("Сегодня в меню:")
-    print(*filetodict(file, ' | '), sep=', ')
-    print("Что будем готовить?")
+    for i in menu_numbers:
+        print(f"{i}. {menu_numbers[i]}")
+
+    print("\nЧто будем готовить?")
+    n = int(input(f"Введите число от 1 до {len(menu_numbers)} или '0' для выхода:"))
+    while n not in menu_numbers and n != 0:
+        n = int(input(f"Введите число от 1 до {len(menu_numbers)} или 0 для выхода:"))
+    if n == 0:
+        print("Выход из программы...")
+        return
+    # menu_numbers[n]
+
+    print(f"Готовим: {menu_numbers[n]}")
+    c = int(input(f"Сколько персон ожидается? Введите число от 1 до дофига или 0 для выхода:"))
+    while c < 0 and c != 0:
+        c = int(input(f"Введите число от 1 до дофига или 0 для выхода:"))
+    if c == 0:
+        print("Выход из программы...")
+        return
+
 
 
 menu()
-
-with open('cook_book.txt', mode='r', encoding='UTF8') as fole:
-    for line in fole:
-        print(line, end='')
-# t = get_shop_list_by_dishes(filetodict('cook_book.txt'), ['Запеченный картофель', 'Омлет'], 3)
-#
-# for m in t:
-#     print(f"{m}: {t[m]}")
+# enumerate_menu(file_to_dict('file.txt'))
