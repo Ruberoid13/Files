@@ -12,7 +12,8 @@ def file_to_dict(file, sep=' | '):
                     cook_book.update({dishname: []})
                 if c >= 2:
                     tmplist = line.split(sep)
-                    cook_book[dishname].append({'ingredient_name': tmplist[0], 'quantity': tmplist[1], 'measure': tmplist[2]})
+                    cook_book[dishname].append({'ingredient_name': tmplist[0],
+                                                'quantity': int(tmplist[1]), 'measure': tmplist[2].replace('\n', '')})
             else:
                 c = -1
             c += 1
@@ -48,41 +49,43 @@ def enumerate_menu(in_dict):
         c += 1
     return out_dict
 
-# def enumerate_menu(in_dict):
-#     c = 1
-#     out_dict = {}
-#     for i in in_dict:
-#         out_dict.update({c: {i: in_dict[i]}})
-#         c += 1
-#     return out_dict
+
+def print_numerated_dict(numdict):
+    for k in numdict:
+        print(f"{k}. {numdict[k]}")
+
+
+def make_list(indict):
+    d = indict
+    out_list = []
+    x = -1
+    print(f"Список блюд:")
+    while len(d) > 0 and x != 0:
+        t = enumerate_menu(d)
+        print_numerated_dict(t)
+        x = int(input(f"Выберите блюдо {1}{f' - {len(d)}' if len(d) > 1 else f''}. Введите 0 для подсчета:\n"))
+        if x in t.keys():
+            print(f"Добавили: '{list(d.keys())[x - 1]}'.")
+            out_list.append(list(d.keys())[x - 1])
+            d.pop(list(d.keys())[int(x) - 1])
+            if len(d) > 0:
+                print(f'\nДобавить следующее блюдо?')
+        elif x != 0:
+            print("Неверный ввод!\n")
+    return out_list
 
 
 def menu():
-    file = 'file.txt'
-    menu = file_to_dict(file)
-    menu_numbers = enumerate_menu(menu)
-    print("Сегодня в меню:")
-    for i in menu_numbers:
-        print(f"{i}. {menu_numbers[i]}")
-
-    print("\nЧто будем готовить?")
-    n = int(input(f"Введите число от 1 до {len(menu_numbers)} или '0' для выхода:"))
-    while n not in menu_numbers and n != 0:
-        n = int(input(f"Введите число от 1 до {len(menu_numbers)} или 0 для выхода:"))
-    if n == 0:
-        print("Выход из программы...")
-        return
-    # menu_numbers[n]
-
-    print(f"Готовим: {menu_numbers[n]}")
-    c = int(input(f"Сколько персон ожидается? Введите число от 1 до дофига или 0 для выхода:"))
-    while c < 0 and c != 0:
-        c = int(input(f"Введите число от 1 до дофига или 0 для выхода:"))
-    if c == 0:
-        print("Выход из программы...")
-        return
-
+    print("Создаем список покупок.\nВыберите блюда.")
+    cook_book = file_to_dict('file.txt')
+    inlist = make_list(file_to_dict('file.txt'))
+    p = int(input("\nНа сколько персон готовить?\n"))
+    h = get_shop_list_by_dishes(cook_book, inlist, p)
+    print("\nСписок покупок:")
+    c = 1
+    for i in h:
+        print(f'{c}. {i}: {h[i]["quantity"]} {h[i]["measure"]}')
+        c += 1
 
 
 menu()
-# enumerate_menu(file_to_dict('file.txt'))
