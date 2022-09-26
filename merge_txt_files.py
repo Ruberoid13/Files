@@ -1,3 +1,4 @@
+# Задание: https://github.com/netology-code/py-homeworks-basic/tree/master/7.files
 import os
 
 
@@ -36,6 +37,18 @@ def make_file(in_dict):
                 new_file.write(f'{i}\n{in_dict[i]}\n{f.read()}')
                 if i != list(in_dict.keys())[-1::][0]:
                     new_file.write('\n')
+    print(f'Файл result.txt создан из файлов: ', end='')
+    print(*in_dict, sep=', ')
 
 
-make_file(sort_dict(create_dict(get_txt_files_list())))
+def main():
+    k = input("Ищем все файлы в папке со скриптом (1) или используем 1.txt, 2.txt и 3.txt (2):\n")
+    while k != '1' and k != '2':
+        k = input("Ошибка. Введите 1 или 2:\n")
+    if k == '1':
+        make_file(sort_dict(create_dict(get_txt_files_list())))
+    elif k == '2':
+        make_file(sort_dict(create_dict()))
+
+
+main()
