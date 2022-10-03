@@ -15,8 +15,11 @@ def create_dict(file_name_list=None):
         file_name_list = ['1.txt', '2.txt', '3.txt']
     file_dict = {}
     for file in file_name_list:
-        with open(file, mode='r', encoding='UTF-8') as opened_file:
-            file_dict.update({file: len(opened_file.readlines())})
+        try:
+            with open(file, mode='r', encoding='UTF-8') as opened_file:
+                file_dict.update({file: len(opened_file.readlines())})
+        except FileNotFoundError:
+            print(f'Ошибка открытия файла: {file}! Файл не найден!')
     return file_dict
 
 
@@ -38,7 +41,7 @@ def make_file(in_dict):
                 if file_name != list(in_dict.keys())[-1::][0]:
                     new_file.write('\n')
     print(f'Файл result.txt создан из файлов: ', end='')
-    print(*in_dict, sep=', ')
+    print(*in_dict, sep=", ")
 
 
 def main():
