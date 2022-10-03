@@ -25,19 +25,19 @@ def get_shop_list_by_dishes(cook_book, dishes, person_count):
     out_dict = {}
     for dish in cook_book:
         if dishes.count(dish) > 0:
-            for engridient in cook_book[dish]:
-                for tmp_engridient in tmp_list:
-                    if tmp_engridient['ingredient_name'] == engridient['ingredient_name']:
-                        tmp_list[tmp_list.index(tmp_engridient)]['quantity'] += engridient['quantity']
-                        tmp_list[tmp_list.index(tmp_engridient)]['quantity'] *= person_count
+            for ingredient in cook_book[dish]:
+                for tmp_ingredient in tmp_list:
+                    if tmp_ingredient['ingredient_name'] == ingredient['ingredient_name']:
+                        tmp_list[tmp_list.index(tmp_ingredient)]['quantity'] += ingredient['quantity']
+                        tmp_list[tmp_list.index(tmp_ingredient)]['quantity'] *= person_count
                         break
                 else:
-                    engridient['quantity'] *= person_count
-                    tmp_list.append(engridient)
-    for engridient in tmp_list:
-        engridient_name = engridient['ingredient_name']
-        engridient.pop('ingredient_name')
-        out_dict.update({engridient_name: engridient})
+                    ingredient['quantity'] *= person_count
+                    tmp_list.append(ingredient)
+    for ingredient in tmp_list:
+        engridient_name = ingredient['ingredient_name']
+        ingredient.pop('ingredient_name')
+        out_dict.update({engridient_name: ingredient})
     return out_dict
 
 
@@ -50,43 +50,60 @@ def enumerate_menu(in_dict):
     return out_dict
 
 
-def print_numerated_dict(num_dict):
-    for number in num_dict:
-        print(f"{number}. {num_dict[number]}")
+def print_numerated_dict(numerated_dict):
+    for number in numerated_dict:
+        print(f"{number}. {numerated_dict[number]}")
 
 
 def make_list(in_dict):
     out_list = []
-    input_num = -1
+    dish_number = -1
+    print("Создаем список покупок.\nВыберите блюда.")
     print(f"Список блюд:")
-    while len(in_dict) > 0 and input_num != 0:
+    while len(in_dict) > 0 and dish_number != 0:
         numerated_dict = enumerate_menu(in_dict)
         print_numerated_dict(numerated_dict)
-        input_num = int(input(f"Выберите блюдо {1}{f' - {len(in_dict)}' if len(in_dict) > 1 else f''}."
-                              f" Введите 0 для подсчета:\n"))
-        if input_num in numerated_dict.keys():
-            print(f"Добавили: '{list(in_dict.keys())[input_num - 1]}'.")
-            out_list.append(list(in_dict.keys())[input_num - 1])
-            in_dict.pop(list(in_dict.keys())[int(input_num) - 1])
+        print(f"Выберите блюдо {1}{f' - {len(in_dict)}' if len(in_dict) > 1 else f''}. Введите 0 для подсчета:\n")
+        read_number = input()
+        dish_number = int(read_number) if read_number.isdigit() else -1
+        if dish_number in numerated_dict.keys():
+            print(f"Добавили: '{list(in_dict.keys())[dish_number - 1]}'.")
+            out_list.append(list(in_dict.keys())[dish_number - 1])
+            in_dict.pop(list(in_dict.keys())[int(dish_number) - 1])
             if len(in_dict) > 0:
                 print(f'\nДобавить следующее блюдо?')
-        elif input_num != 0:
+        elif dish_number != 0:
             print("Неверный ввод!\n")
     return out_list
 
 
-def menu():
-    print("Создаем список покупок.\nВыберите блюда.")
-    cook_book = file_to_dict('file.txt')
-    inlist = make_list(file_to_dict('file.txt'))
-    person_count = int(input("\nНа сколько персон готовить?\n"))
-    engridient_list = get_shop_list_by_dishes(cook_book, inlist, person_count)
+def get_person_number():
+    person_number = -1
+    print("\nНа сколько персон готовить?\n")
+    while person_number == -1:
+        read_number = input()
+        if read_number.isdigit() and int(read_number) > 0:
+            person_number = int(read_number)
+        else:
+            print(f"Неверный ввод!\nВведите целое положительное число.\nНа сколько персон готовить?:")
+    return person_number
+
+
+def print_shopping_list(in_list):
     print("\nСписок покупок:")
     counter = 1
-    for engridient in engridient_list:
-        print(f'{counter}. {engridient}: {engridient_list[engridient]["quantity"]} '
-              f'{engridient_list[engridient]["measure"]}')
+    for ingredient in in_list:
+        print(f'{counter}. {ingredient}: {in_list[ingredient]["quantity"]} '
+              f'{in_list[ingredient]["measure"]}')
         counter += 1
+
+
+def menu():
+    cook_book = file_to_dict('file.txt')
+    ingredient_list = make_list(file_to_dict('file.txt'))
+    person_number = get_person_number()
+    ingredient_list = get_shop_list_by_dishes(cook_book, ingredient_list, person_number)
+    print_shopping_list(ingredient_list)
 
 
 menu()
